@@ -59,8 +59,6 @@ export const getUserConversations = async<Payload>(
 export const createMessage = async(
     payload: any,
     socket: any,
-    setMesssage: Function
-    // navigate: Function
 ) => {
     try {
         const {data} = await api.post<SuccessResponse<GetMessageResposeModel>>(`/message/create`,payload);
@@ -71,7 +69,7 @@ export const createMessage = async(
             data: data.data
           }));
         
-          setMesssage(data.data)
+        getMessagesByChatId(payload.chatId, "internal")
     } catch (err) {
         setLoading(false)
         const error = err as ErrorResponse;
@@ -80,11 +78,12 @@ export const createMessage = async(
 };
 
 export const getMessagesByChatId = async<Payload>(
-    chatId: string | any
+    chatId: string | any,
+    callingType ="default"
 ) => {
     try {
+        if(callingType==="default")   setLoading('all');
 
-        setLoading('all')
         const {data} = await api.get<SuccessResponse<GetMessageResposeModel[]>>(`/message/by-chat-id/${chatId}`);
         
         setMesssages(data?.data)

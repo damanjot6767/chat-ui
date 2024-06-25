@@ -67,7 +67,7 @@ function Form() {
         video:null,
         image:null,
         file:null
-      }, socket, setMesssage);
+      }, socket);
       setMessage("")
   }
 
