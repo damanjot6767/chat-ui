@@ -12,7 +12,7 @@ interface ApiConfig {
 
 const apiConfig: ApiConfig = {
   baseURL: `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/v1` || "",
-  timeout: Number(process.env.API_TIMEOUT) || 10000
+  timeout: Number(process.env.API_TIMEOUT) || 1000000
 };
 
 const axiosInstance: AxiosInstance = axios.create(apiConfig);

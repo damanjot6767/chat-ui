@@ -21,8 +21,7 @@ function Form() {
   const {user} = useUserStore();
   const {conversationUser} = useConversationUser(conversation,user)
   const { isLoading, setLoading, setMesssage, setIndividualMessage} = useMessageStore();
-  
-  const [localTyping, setLocalTyping] = useState(false)
+
 
   const handleChange = (e: any) => {
     setMessage(e.target.value);
@@ -50,6 +49,16 @@ function Form() {
 
   const sendMessage = (e: any) => {
     e?.preventDefault()
+    const messageObject =  { 
+      body: message, 
+      chatId: conversationId,
+      messageSentBy: user?._id, 
+      userIds: conversation?.userIds?.map((item)=>item.userId), 
+      video:null,
+      image:null,
+      file:null
+    }
+    setIndividualMessage(messageObject)
     createMessage(
       { 
         body: message, 
@@ -58,7 +67,8 @@ function Form() {
         video:null,
         image:null,
         file:null
-      }, setMesssage, socket);
+      }, socket, setMesssage);
+      setMessage("")
   }
 
 

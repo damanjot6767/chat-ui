@@ -1,4 +1,5 @@
 import React from 'react';
+import { IoIosTimer } from "react-icons/io";
 
 export function H1({title}:{title:string}):React.ReactElement {
     return (
@@ -32,10 +33,11 @@ export function H1({title}:{title:string}):React.ReactElement {
     )
   }
   
-  export function H5({title="",className}:{title:string,className?:string}):React.ReactElement {
+  export function H5({title="",className, pending}:{title:string,className?:string, pending?:boolean}):React.ReactElement {
     return (
       <p className={`text-sm text-muted-foreground ${className}`}>
         {title}
+        {pending===true ?<IoIosTimer className='inline ml-1' size={14}/>: null}
       </p>
     )
   }

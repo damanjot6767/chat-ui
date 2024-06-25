@@ -24,7 +24,19 @@ const useMessageStore = create<MesssageState>()(persist(
         setLoading: (value) => set((state) => ({ isLoading: value })),
         setIndividualMessage: (value) => set((state)=>({messages: state.messages?.length? [...state.messages,value]: [value]})),
         setMesssage: (data) => {
-            return set((state) => ({ isLoading: false, messages: state.messages?.length ? [...state.messages, data] : [data] }))
+            return set((state) => {
+                let newMessages = state.messages;
+                if(newMessages?.length){
+                    newMessages[newMessages.length-1] = data;
+                }
+                else{
+                    newMessages = [data];
+                }
+                return { 
+                    isLoading: false, 
+                    messages: newMessages
+                }
+            })
         } ,
         setMesssages: (data) => set((state) => ({ isLoading: false, messages: data })),
         setTyping: (value) => set((state) => ({ typing: value }))

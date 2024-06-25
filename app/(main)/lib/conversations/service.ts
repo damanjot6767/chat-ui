@@ -58,8 +58,8 @@ export const getUserConversations = async<Payload>(
 
 export const createMessage = async(
     payload: any,
-    setMessage: Function,
-    socket: any
+    socket: any,
+    setMesssage: Function
     // navigate: Function
 ) => {
     try {
@@ -70,9 +70,8 @@ export const createMessage = async(
             event: ChatEventEnum.MESSAGE_RECEIVED_EVENT,
             data: data.data
           }));
-
-          setMessage(data.data)
         
+          setMesssage(data.data)
     } catch (err) {
         setLoading(false)
         const error = err as ErrorResponse;

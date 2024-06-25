@@ -63,8 +63,9 @@ function Body() {
               >
                 <H5 title="You" />
                 <H5
-                  title={item?.body || ""}
+                  title={item.body || ""}
                   className="bg-accent text-start py-[7px] px-3 rounded-md mt-1 max-w-[50%] overflow-x-auto h-auto"
+                  pending={item.createdAt?false:true}
                 />
               </div>
             </div>

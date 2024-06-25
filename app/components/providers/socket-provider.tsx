@@ -28,7 +28,7 @@ export const SocketProvider = ({
     const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
-        const socketInstance = new WebSocket("ws://localhost:8000");
+        const socketInstance = new WebSocket(process.env.NEXT_PUBLIC_WEBSOCKET_CONNECTION_URL || "");
     
         socketInstance.onopen = () => {
             console.log('WebSocket connected');
@@ -37,8 +37,8 @@ export const SocketProvider = ({
             setSocket(socketInstance);
         };
     
-        socketInstance.onclose = () => {
-            console.log('WebSocket disconnected');
+        socketInstance.onclose = (err) => {
+            console.log('WebSocket disconnected', err);
         };
     
         socketInstance.onmessage = (event) => {
