@@ -28,7 +28,7 @@ function ConversationList() {
   useEffect(() => {
     if (socket) {
       socket.onmessage = (res: any) => {
-        const data = JSON.parse(res);
+        const data = JSON.parse(res.data);
         if(data.event===ChatEventEnum.TYPING_EVENT){
           setTyping(data.typing?data.chatId:null)
         }

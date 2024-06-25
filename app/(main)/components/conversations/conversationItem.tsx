@@ -33,16 +33,6 @@ function ConversationItem({
     // setConversation(conversation);
   }
 
-  useEffect(()=>{
-    if(socket){
-      console.log("working",socket)
-      socket.send(JSON.stringify({
-        event: ChatEventEnum.JOIN_CHAT_EVENT,
-        chatId: conversation._id
-      }))
-    }
-  },[socket])
-
 
   return (
     <div

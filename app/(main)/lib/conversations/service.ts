@@ -1,5 +1,5 @@
 import api from "@/app/axios";
-import { Routes } from "@/app/lib/constant";
+import { ChatEventEnum, Routes } from "@/app/lib/constant";
 import { ErrorResponse } from "@/app/lib/error-response-model";
 import { SuccessResponse } from "@/app/lib/response-model";
 import { Toaster } from "@/app/lib/toast";
@@ -56,23 +56,22 @@ export const getUserConversations = async<Payload>(
     }
 };
 
-export const createMessage = async<Payload>(
-    payload: Payload,
-    setState: Function,
-    setState1: Function,
-    setLoading: Function,
+export const createMessage = async(
+    payload: any,
+    setMessage: Function,
+    socket: any
     // navigate: Function
 ) => {
     try {
-        
-        setLoading('message')
         const {data} = await api.post<SuccessResponse<GetMessageResposeModel>>(`/message/create`,payload);
         
-        // await setState(data.data)
-        getMessagesByChatId(data.data?.chatId)
-        setLoading(false)
-        
-        // navigate(`${Routes.Conversations}/${data.data._id}`)
+        socket.send(JSON.stringify({
+            chatId:payload?.chatId,
+            event: ChatEventEnum.MESSAGE_RECEIVED_EVENT,
+            data: data.data
+          }));
+
+          setMessage(data.data)
         
     } catch (err) {
         setLoading(false)

@@ -29,20 +29,15 @@ function Form() {
 
     if (socket) {
 
-      if (!message) {
-        setLocalTyping(true)
         socket.send(JSON.stringify({
           chatId:conversation?._id,
           event: ChatEventEnum.TYPING_EVENT,
           typing: true
         }));
-        console.log("working")
-      }
 
       if (id) clearTimeout(id)
 
       id = setTimeout(() => {
-        console.log("working")
         socket.send(JSON.stringify({
           chatId:conversation?._id,
           event: ChatEventEnum.TYPING_EVENT,
@@ -55,15 +50,6 @@ function Form() {
 
   const sendMessage = (e: any) => {
     e?.preventDefault()
-    setIndividualMessage({ 
-      body: message, 
-      chatId: conversationId,
-      messageSentBy: user?._id, 
-      userIds: conversation?.userIds?.map((item)=>item.userId), 
-      video:null,
-      image:null,
-      file:null
-    })
     createMessage(
       { 
         body: message, 
@@ -72,7 +58,7 @@ function Form() {
         video:null,
         image:null,
         file:null
-      }, setMesssage, setIndividualMessage, setLoading);
+      }, setMesssage, socket);
   }
 
 
