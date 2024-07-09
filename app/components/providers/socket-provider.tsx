@@ -4,6 +4,7 @@ import { useContext, useEffect, useState, createContext } from "react";
 import { getCookie } from "cookies-next";
 import { Toaster } from "@/app/lib/toast";
 import { ChatEventEnum } from "@/app/lib/constant";
+import useMessageStore from "@/app/store/message-store";
 
 type SocketContextType = {
     socket: any | null;
@@ -26,6 +27,7 @@ export const SocketProvider = ({
 }) => {
     const [socket, setSocket] = useState<any>(null);
     const [isConnected, setIsConnected] = useState(false);
+    const { setMesssage, setTyping } = useMessageStore();
 
     useEffect(() => {
         const socketInstance = new WebSocket(process.env.NEXT_PUBLIC_WEBSOCKET_CONNECTION_URL || "");
@@ -41,9 +43,16 @@ export const SocketProvider = ({
             console.log('WebSocket disconnected', err);
         };
     
-        socketInstance.onmessage = (event) => {
-            console.log('Received data:', event.data);
-            // Handle incoming messages here
+        socketInstance.onmessage = (res: any) => {
+            console.log("47")
+            const data = JSON.parse(res.data);
+            if(data.event===ChatEventEnum.TYPING_EVENT){
+              setTyping(data.data.typing?data.data.chatId:null)
+            }
+    
+            else if(data.event===ChatEventEnum.MESSAGE_RECEIVED_EVENT){
+              setMesssage(data.data)
+            }
         };
     
         return () => {

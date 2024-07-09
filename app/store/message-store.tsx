@@ -27,7 +27,7 @@ const useMessageStore = create<MesssageState>()(persist(
             return set((state) => {
                 let newMessages = state.messages;
                 if(newMessages?.length){
-                    newMessages[newMessages.length-1] = data;
+                    newMessages.push(data);
                 }
                 else{
                     newMessages = [data];

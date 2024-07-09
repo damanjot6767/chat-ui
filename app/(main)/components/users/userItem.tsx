@@ -22,11 +22,6 @@ function UserItem({ user }: UserItemProps) {
   } = useConversationStore()
 
   const handleClick = () => {
-    const isExist = conversations?.find((ele)=>ele.userIds?.find((item)=>item.userId===user._id))
-    if(isExist){
-      router.push(`${Routes.Conversations}/${isExist._id}`)
-      return
-    }
     createConversation(
       { chatType: ChatType.INDIVIDUAL,
         userIds: [user._id]},

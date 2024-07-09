@@ -16,11 +16,11 @@ function Form() {
   const [message, setMessage] = useState('')
   const { socket } = useSocket();
   const { conversationId } = useConversation();
-  
-  const {conversation} = useConversationStore();
-  const {user} = useUserStore();
-  const {conversationUser} = useConversationUser(conversation,user)
-  const { isLoading, setLoading, setMesssage, setIndividualMessage} = useMessageStore();
+
+  const { conversation } = useConversationStore();
+  const { user } = useUserStore();
+  const { conversationUser } = useConversationUser(conversation, user)
+  const { isLoading, setLoading, setMesssage, setIndividualMessage } = useMessageStore();
 
 
   const handleChange = (e: any) => {
@@ -28,19 +28,25 @@ function Form() {
 
     if (socket) {
 
-        socket.send(JSON.stringify({
-          chatId:conversation?._id,
-          event: ChatEventEnum.TYPING_EVENT,
+      socket.send(JSON.stringify({
+        data: {
+          messageSentBy: user?._id,
+          chatId: conversation?._id,
           typing: true
-        }));
+        },
+        event: ChatEventEnum.TYPING_EVENT,
+      }));
 
       if (id) clearTimeout(id)
 
       id = setTimeout(() => {
         socket.send(JSON.stringify({
-          chatId:conversation?._id,
+          data: {
+            messageSentBy: user?._id,
+            chatId: conversation?._id,
+            typing: false
+          },
           event: ChatEventEnum.TYPING_EVENT,
-          typing: false
         }));
       }, 4000)
 
@@ -49,26 +55,31 @@ function Form() {
 
   const sendMessage = (e: any) => {
     e?.preventDefault()
-    const messageObject =  { 
-      body: message, 
-      chatId: conversationId,
-      messageSentBy: user?._id, 
-      userIds: conversation?.userIds?.map((item)=>item.userId), 
-      video:null,
-      image:null,
-      file:null
-    }
-    setIndividualMessage(messageObject)
-    createMessage(
-      { 
-        body: message, 
-        chatId: conversationId, 
-        userIds: conversation?.userIds?.map((item)=>item.userId), 
-        video:null,
-        image:null,
-        file:null
-      }, socket);
-      setMessage("")
+    const userIds = conversation?.userIds.map((item) => ({ isMessageDelete: false, userId: item.userId }));
+
+    socket.send(JSON.stringify({
+      event: ChatEventEnum.MESSAGE_RECEIVED_EVENT,
+      data: {
+        messageSentBy: user?._id,
+        body: message,
+        chatId: conversationId,
+        userIds: userIds,
+        video: null,
+        image: null,
+        file: null
+      }
+    }));
+
+    // createMessage(
+    //   { 
+    //     body: message, 
+    //     chatId: conversationId, 
+    //     userIds: conversation?.userIds?.map((item)=>item.userId), 
+    //     video:null,
+    //     image:null,
+    //     file:null
+    //   }, socket);
+    setMessage("")
   }
 
 
@@ -108,8 +119,8 @@ function Form() {
         p-2 
         bg-background"
         type="submit"
-        disabled={isLoading?true : false}
-        >
+        disabled={isLoading ? true : false}
+      >
         <HiPaperAirplane size={18} />
       </button>
     </form>

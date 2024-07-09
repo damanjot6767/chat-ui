@@ -64,7 +64,6 @@ export const createMessage = async(
         const {data} = await api.post<SuccessResponse<GetMessageResposeModel>>(`/message/create`,payload);
         
         socket.send(JSON.stringify({
-            chatId:payload?.chatId,
             event: ChatEventEnum.MESSAGE_RECEIVED_EVENT,
             data: data.data
           }));

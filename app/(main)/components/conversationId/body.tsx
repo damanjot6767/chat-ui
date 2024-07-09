@@ -23,7 +23,7 @@ function Body() {
 
   useEffect(() => {
     bottomRef?.current?.scrollIntoView();
-  }, [messages, isLoading]);
+  }, [messages?.length]);
 
   return (
     <div
