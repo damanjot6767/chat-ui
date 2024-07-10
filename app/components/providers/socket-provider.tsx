@@ -30,30 +30,44 @@ export const SocketProvider = ({
     const { setMesssage, setTyping } = useMessageStore();
 
     useEffect(() => {
-        const socketInstance = new WebSocket(process.env.NEXT_PUBLIC_WEBSOCKET_CONNECTION_URL || "");
+        let socketInstance: WebSocket | null = null;
     
-        socketInstance.onopen = () => {
-            console.log('WebSocket connected');
-            setIsConnected(true);
-            socketInstance.send(JSON.stringify({ event: ChatEventEnum.CONNECTED_EVENT, token: getCookie('accessToken') }));
-            setSocket(socketInstance);
+        const connectWebSocket = () => {
+            socketInstance = new WebSocket(process.env.NEXT_PUBLIC_WEBSOCKET_CONNECTION_URL || "");
+    
+            socketInstance.onopen = () => {
+                console.log('WebSocket connected');
+                setIsConnected(true);
+                socketInstance?.send(JSON.stringify({ event: ChatEventEnum.CONNECTED_EVENT, token: getCookie('accessToken') }));
+                setSocket(socketInstance);
+            };
+    
+            socketInstance.onclose = (err) => {
+                console.log('WebSocket disconnected', err);
+                setIsConnected(false);
+                // Attempt to reconnect after a delay (e.g., 5 seconds)
+                setTimeout(() => {
+                    console.log('Attempting to reconnect WebSocket...');
+                    connectWebSocket(); // Recreate WebSocket connection
+                }, 5000); // Adjust delay as needed
+            };
+    
+            socketInstance.onmessage = (res: MessageEvent) => {
+                const data = JSON.parse(res.data);
+                if (data.event === ChatEventEnum.TYPING_EVENT) {
+                    setTyping(data.data.typing ? data.data.chatId : null);
+                } else if (data.event === ChatEventEnum.MESSAGE_RECEIVED_EVENT) {
+                    setMesssage(data.data);
+                }
+            };
+    
+            socketInstance.onerror = (err) => {
+                console.error('WebSocket error:', err);
+                // Handle WebSocket connection errors
+            };
         };
     
-        socketInstance.onclose = (err) => {
-            console.log('WebSocket disconnected', err);
-        };
-    
-        socketInstance.onmessage = (res: any) => {
-            console.log("47")
-            const data = JSON.parse(res.data);
-            if(data.event===ChatEventEnum.TYPING_EVENT){
-              setTyping(data.data.typing?data.data.chatId:null)
-            }
-    
-            else if(data.event===ChatEventEnum.MESSAGE_RECEIVED_EVENT){
-              setMesssage(data.data)
-            }
-        };
+        connectWebSocket();
     
         return () => {
             if (socketInstance) {
