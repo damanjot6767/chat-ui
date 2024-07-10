@@ -7,12 +7,10 @@ interface MesssageState {
     isLoading: boolean | string,
     message: MesssageModal | null,
     messages: MesssageModal[] | null,
-    typing: null | string,
     setLoading: (value: boolean | string) => void,
     setMesssage: (data: MesssageModal) => void,
     setIndividualMessage: (data: any) => void,
     setMesssages: (data: MesssageModal[]) => void,
-    setTyping: (Id: null | string) => void,
 }
 
 const useMessageStore = create<MesssageState>()(persist(
@@ -39,7 +37,6 @@ const useMessageStore = create<MesssageState>()(persist(
             })
         } ,
         setMesssages: (data) => set((state) => ({ isLoading: false, messages: data })),
-        setTyping: (value) => set((state) => ({ typing: value }))
     }),
     {
         name: 'message store'

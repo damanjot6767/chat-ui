@@ -11,10 +11,8 @@ function Header() {
 
   const { user } = useUserStore();
   const { conversation } = useConversationStore();
-  const { typing} = useMessageStore();
-
   const { conversationUser } = useConversationUser(conversation,user)
-
+  
   return (
     <div
       className="
@@ -46,7 +44,7 @@ function Header() {
         >
           <H4 title={conversationUser?.email || 'N/A'} />
           <H5 title="new mewssage" />
-          {typing &&  <H5 title="typing..." />}
+          {conversation?.isTyping &&  <H5 title="typing..." />}
         </div>
       </div>
       <div

@@ -1,5 +1,6 @@
 import { UserModel } from "../users/user-model";
 import { ChatType } from "./contant";
+import { MesssageModal } from "./message-model";
 
 
 export interface ConversationModal {
@@ -12,6 +13,9 @@ export interface ConversationModal {
   messages?: string[];
   latestMessage: string;
   chatType?: ChatType;
+  isTyping:Boolean;
+  isNewMessage:MesssageModal| null;
+  isOnline:Boolean;
   createdAt: Date;
   updatedAt: Date
 }

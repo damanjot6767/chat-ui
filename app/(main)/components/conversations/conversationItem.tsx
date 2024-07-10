@@ -10,6 +10,7 @@ import useUserStore from "@/app/store/user-store";
 import { useConversationUser } from "@/app/hooks/useConversationUser";
 import useMessageStore from "@/app/store/message-store";
 import { useSocket } from "@/app/components/providers/socket-provider";
+import { Button } from "@/components/ui/button";
 
 interface ConversationItemProps {
   conversation: ConversationModal,
@@ -22,11 +23,7 @@ function ConversationItem({
 }: ConversationItemProps) {
   const router = useRouter();
   const { user } = useUserStore();
-  const { setConversation } = useConversationStore()
-  const { conversationUser} = useConversationUser(conversation,user)
-  const { typing} = useMessageStore();
-
-  const { socket } = useSocket();
+  const { conversationUser } = useConversationUser(conversation, user)
 
   const handleClick = () => {
     router.push(`${Routes.Conversations}/${conversation?._id}`)
@@ -55,7 +52,11 @@ function ConversationItem({
         flex-col 
       ">
         <H4 title={conversationUser?.email || 'N/A'} />
-        <H5 title={typing===conversation?._id?'typing...':'new conversation'} />
+        {conversation.isNewMessage ?
+          <H5 title={conversation.isNewMessage.body ? conversation.isNewMessage.body : ""} />
+          : null
+        }
+        <H5 title={conversation.isTyping ? 'typing...' : 'new conversation'} />
       </div>
     </div>
   );

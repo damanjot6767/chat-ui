@@ -41,6 +41,7 @@ export const getUserConversations = async<Payload>(
         setLoading(true)
 
         const {data} = await api.get<SuccessResponse<GetConversationResposeModel[]>>(`/chat/chat-by-user-id/${null}`);
+        const newData = data?.data?.map((ele)=>({...ele,isNewMessage:null,isOnline:false,isTyping: false}))
         setState(data.data)
 
         // Toaster('success', data.message);

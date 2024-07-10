@@ -19,8 +19,7 @@ function Form() {
 
   const { conversation } = useConversationStore();
   const { user } = useUserStore();
-  const { conversationUser } = useConversationUser(conversation, user)
-  const { isLoading, setLoading, setMesssage, setIndividualMessage } = useMessageStore();
+  const { isLoading} = useMessageStore();
 
 
   const handleChange = (e: any) => {
