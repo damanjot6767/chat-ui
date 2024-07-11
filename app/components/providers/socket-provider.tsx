@@ -31,17 +31,16 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     const handleSocketEvent = (data: any) => {
         if (data.event === ChatEventEnum.TYPING_EVENT) {
             const newdata = conversationsRef.current?.map((ele) => ele._id === data.data.chatId ? { ...ele, isTyping: data.data.typing } : ele);
-            console.log("31", conversationsRef)
             if (newdata) setConversations(newdata);
             if (conversationRef.current) {
                 setConversation({ ...conversationRef.current, isTyping: data.data.typing });
             }
         } else if (data.event === ChatEventEnum.MESSAGE_RECEIVED_EVENT) {
             setMesssage(data.data);
-            const newdata = conversationsRef.current?.map((ele) => ele._id === data.data.chatId ? { ...ele, isNewMessage: data.data } : ele);
+            const newdata = conversationsRef.current?.map((ele) => ele._id === data.data.chatId ? { ...ele, isNewMessage: data.data,unseenMessagesIds:[...ele.unseenMessagesIds,data.data._id] } : ele);
             if (newdata) setConversations(newdata);
             if (conversationRef.current) {
-                setConversation({ ...conversationRef.current, isNewMessage: data.data });
+                setConversation({ ...conversationRef.current, isNewMessage: data.data});
             }
         }
     }

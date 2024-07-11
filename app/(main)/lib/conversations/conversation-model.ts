@@ -15,6 +15,7 @@ export interface ConversationModal {
   chatType?: ChatType;
   isTyping:Boolean;
   isNewMessage:MesssageModal| null;
+  unseenMessagesIds: string[] | [];
   isOnline:Boolean;
   createdAt: Date;
   updatedAt: Date

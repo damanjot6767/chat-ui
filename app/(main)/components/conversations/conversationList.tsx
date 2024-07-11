@@ -18,7 +18,7 @@ function ConversationList() {
   } = useConversationStore()
 
   useEffect(() => {
-    getUserConversations(setConversations, setLoading);
+    getUserConversations(conversations,setConversations, setLoading);
   }, [])
 
 

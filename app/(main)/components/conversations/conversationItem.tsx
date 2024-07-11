@@ -53,11 +53,16 @@ function ConversationItem({
       ">
         <H4 title={conversationUser?.email || 'N/A'} />
         {conversation.isNewMessage ?
-          <H5 title={conversation.isNewMessage.body ? conversation.isNewMessage.body : ""} />
+          <div className="flex items-center justify-between">
+            <H5 title={conversation.isNewMessage.body ? conversation.isNewMessage.body : ""} />
+            <div className="flex items-center justify-center w-5 h-5 p-2 rounded-full bg-primary">
+              <H5 className="text-white text-[10px] mt-[1px]" title={conversation.unseenMessagesIds?.length ? conversation.unseenMessagesIds.length : 0} />
+            </div>
+          </div>
           : null
         }
         {
-          conversation.isTyping?<H5 title="typing..."/>:null
+          conversation.isTyping ? <H5 title="typing..." /> : null
         }
       </div>
     </div>

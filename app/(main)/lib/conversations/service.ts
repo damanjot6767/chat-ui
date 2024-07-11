@@ -3,7 +3,7 @@ import { ChatEventEnum, Routes } from "@/app/lib/constant";
 import { ErrorResponse } from "@/app/lib/error-response-model";
 import { SuccessResponse } from "@/app/lib/response-model";
 import { Toaster } from "@/app/lib/toast";
-import { GetConversationResposeModel } from "./conversation-model";
+import { ConversationModal, GetConversationResposeModel } from "./conversation-model";
 import { GetMessageResposeModel } from "./message-model";
 import { setLoading, setMesssages } from "@/app/store/message-store";
 
@@ -33,6 +33,7 @@ export const createConversation = async<Payload>(
 };
 
 export const getUserConversations = async<Payload>(
+    Conversations: ConversationModal[] | null,
     setState: Function,
     setLoading: Function,
     // navigate: Function
@@ -41,8 +42,8 @@ export const getUserConversations = async<Payload>(
         setLoading(true)
 
         const {data} = await api.get<SuccessResponse<GetConversationResposeModel[]>>(`/chat/chat-by-user-id/${null}`);
-        const newData = data?.data?.map((ele)=>({...ele,isNewMessage:null,isOnline:false,isTyping: false}))
-        setState(data.data)
+        const newData = data?.data?.map((ele)=>({...ele,isNewMessage:null,isOnline:false,isTyping: false,unseenMessagesIds:[]}))
+        setState(newData)
 
         // Toaster('success', data.message);
         setLoading(false)
