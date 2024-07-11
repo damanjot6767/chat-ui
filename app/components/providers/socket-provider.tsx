@@ -1,5 +1,5 @@
 'use client'
-import { useContext, useEffect, useState, createContext } from "react";
+import { useContext, useEffect, useState, createContext, useRef } from "react";
 import { getCookie } from "cookies-next";
 import { ChatEventEnum } from "@/app/lib/constant";
 import useMessageStore from "@/app/store/message-store";
@@ -25,6 +25,27 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     const { setMesssage } = useMessageStore();
     const { conversations, setConversations, conversation, setConversation } = useConversationStore();
 
+    const conversationRef = useRef(conversation);
+    const conversationsRef = useRef(conversations);
+
+    const handleSocketEvent = (data: any) => {
+        if (data.event === ChatEventEnum.TYPING_EVENT) {
+            const newdata = conversationsRef.current?.map((ele) => ele._id === data.data.chatId ? { ...ele, isTyping: data.data.typing } : ele);
+            console.log("31", conversationsRef)
+            if (newdata) setConversations(newdata);
+            if (conversationRef.current) {
+                setConversation({ ...conversationRef.current, isTyping: data.data.typing });
+            }
+        } else if (data.event === ChatEventEnum.MESSAGE_RECEIVED_EVENT) {
+            setMesssage(data.data);
+            const newdata = conversationsRef.current?.map((ele) => ele._id === data.data.chatId ? { ...ele, isNewMessage: data.data } : ele);
+            if (newdata) setConversations(newdata);
+            if (conversationRef.current) {
+                setConversation({ ...conversationRef.current, isNewMessage: data.data });
+            }
+        }
+    }
+
     useEffect(() => {
         let socketInstance: WebSocket | null = null;
 
@@ -49,21 +70,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
             socketInstance.onmessage = (res: MessageEvent) => {
                 const data = JSON.parse(res.data);
-                if (data.event === ChatEventEnum.TYPING_EVENT) {
-                    console.log("53",conversations)
-                    const newdata = conversations?.map((ele) => ele._id === data.data.chatId ? { ...ele, isTyping: data.data.typing } : ele);
-                    if (newdata) setConversations(newdata);
-                    if (conversation) {
-                        setConversation({ ...conversation, isTyping: data.data.typing });
-                    }
-                } else if (data.event === ChatEventEnum.MESSAGE_RECEIVED_EVENT) {
-                    setMesssage(data.data);
-                    const newdata = conversations?.map((ele) => ele._id === data.data.chatId ? { ...ele, isNewMessage: data.data } : ele);
-                    if (newdata) setConversations(newdata);
-                    if (conversation) {
-                        setConversation({ ...conversation, isNewMessage: data.data });
-                    }
-                }
+                handleSocketEvent(data);
             };
 
             socketInstance.onerror = (err) => {
@@ -81,9 +88,13 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     }, []);
 
     useEffect(() => {
-        if (conversation) setConversation(conversation);
-        if (conversations) setConversations(conversations);
-    }, [conversation, conversations, setConversation, setConversations]);
+        if (conversation) {
+            conversationRef.current = conversation
+        }
+        if (conversations) {
+            conversationsRef.current = conversations
+        }
+    }, [conversation, conversations])
 
     return (
         <SocketContext.Provider value={{ socket, isConnected }}>

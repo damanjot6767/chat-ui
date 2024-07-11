@@ -56,7 +56,9 @@ function ConversationItem({
           <H5 title={conversation.isNewMessage.body ? conversation.isNewMessage.body : ""} />
           : null
         }
-        <H5 title={conversation.isTyping ? 'typing...' : 'new conversation'} />
+        {
+          conversation.isTyping?<H5 title="typing..."/>:null
+        }
       </div>
     </div>
   );
